@@ -1,5 +1,4 @@
 import { Field, ObjectType } from '@nestjs/graphql';
-import { RestaurantsResolver } from '../restaurants.resolver';
 import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
 
 @ObjectType()
@@ -29,4 +28,3 @@ export class Restaurant {
   @Column()
   categoryName: string;
 }
-providers: [RestaurantsResolver];
