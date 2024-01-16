@@ -49,7 +49,7 @@ export class UsersService {
         return { ok: false, error: 'Wrong password' };
       }
 
-      const token = this.jwtService.sign({ id: user.id });
+      const token = this.jwtService.sign(user.id);
 
       return {
         ok: true,
