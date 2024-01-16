@@ -14,7 +14,9 @@ export class UsersService {
     @InjectRepository(User) private readonly users: Repository<User>,
     private readonly configService: ConfigService,
     private readonly jwtService: JwtService,
-  ) {}
+  ) {
+    this.jwtService.hello();
+  }
 
   async createAccount({
     email,
