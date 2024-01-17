@@ -46,12 +46,5 @@ export class UsersResolver {
 
   @Query(() => User)
   @UseGuards(AuthGuard)
-  me(@Context() context) {
-    console.log('context', context);
-    if (!context.user) {
-      return;
-    } else {
-      return context.user;
-    }
-  }
+  me() {}
 }
