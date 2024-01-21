@@ -65,10 +65,9 @@ export class UsersService {
     return this.users.findOne({ where: { id } });
   }
 
-  async editProfile(userId: number, { email, password }: EditProfileInput) {
+  async editProfile(userId: number, editProfileInput: EditProfileInput) {
     return this.users.update(userId, {
-      email,
-      password,
+      ...editProfileInput,
     });
   }
 }
