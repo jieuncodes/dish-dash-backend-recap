@@ -100,6 +100,7 @@ export class UsersService {
     });
     if (verification) {
       verification.user.verified = true;
+      console.log(verification.user);
       this.users.save(verification.user);
     }
     return false;
