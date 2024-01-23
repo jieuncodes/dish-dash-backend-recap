@@ -11,10 +11,11 @@ import { AuthGuard } from 'src/auth/auth.guard';
 import { AuthUser } from 'src/auth/auth-user.decorator';
 import { UserProfileInput, UserProfileOutput } from './dtos/user-profile.dto';
 import { EditProfileInput, EditProfileOutput } from './dtos/edit-profile.dto';
+import { VerifyEmailInput, VerifyEmailOutput } from './dtos/verify-email.dto';
 
 @Resolver(() => User)
 export class UsersResolver {
-  constructor(private readonly userService: UsersService) {}
+  constructor(private readonly usersService: UsersService) {}
 
   @Query(() => Boolean)
   hi() {
@@ -26,7 +27,7 @@ export class UsersResolver {
     @Args('input') createAccountInput: CreateAccountInput,
   ): Promise<CreateAccountOutput> {
     try {
-      return this.userService.createAccount(createAccountInput);
+      return this.usersService.createAccount(createAccountInput);
     } catch (error) {
       return {
         ok: false,
@@ -38,7 +39,7 @@ export class UsersResolver {
   @Mutation(() => LoginOutput)
   async login(@Args('input') loginInput: LoginInput): Promise<LoginOutput> {
     try {
-      return await this.userService.login(loginInput);
+      return await this.usersService.login(loginInput);
     } catch (e) {
       return {
         ok: false,
@@ -59,7 +60,7 @@ export class UsersResolver {
     @Args() userProfileInput: UserProfileInput,
   ): Promise<UserProfileOutput> {
     try {
-      const user = await this.userService.findById(userProfileInput.userId);
+      const user = await this.usersService.findById(userProfileInput.userId);
       if (!user) throw Error();
 
       return {
@@ -81,7 +82,7 @@ export class UsersResolver {
     @Args('input') editProfileInput: EditProfileInput,
   ): Promise<EditProfileOutput> {
     try {
-      await this.userService.editProfile(authUser.id, editProfileInput);
+      await this.usersService.editProfile(authUser.id, editProfileInput);
       return {
         ok: true,
       };
@@ -91,5 +92,10 @@ export class UsersResolver {
         error,
       };
     }
+  }
+
+  @Mutation(() => VerifyEmailOutput)
+  verifyEmail(@Args('input') { code }: VerifyEmailInput) {
+    this.usersService.verifyEmail(code);
   }
 }
