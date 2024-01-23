@@ -83,6 +83,8 @@ export class UsersService {
     const user = await this.users.findOne({ where: { id: userId } });
     if (email) {
       user.email = email;
+      user.verified = false;
+      await this.verification.save(this.verification.create({ user }));
     }
     if (password) {
       user.password = password;
