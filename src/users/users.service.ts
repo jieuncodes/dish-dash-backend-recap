@@ -14,9 +14,9 @@ import { UserProfileOutput } from './dtos/user-profile.dto';
 export class UsersService {
   constructor(
     @InjectRepository(User) private readonly users: Repository<User>,
-    private readonly jwtService: JwtService,
     @InjectRepository(Verification)
     private readonly verification: Repository<Verification>,
+    private readonly jwtService: JwtService,
   ) {}
 
   async createAccount({
@@ -122,7 +122,8 @@ export class UsersService {
       });
       if (verification) {
         verification.user.verified = true;
-        this.users.save(verification.user);
+        await this.users.save(verification.user);
+        await this.verification.delete(verification.id);
         return { ok: true };
       }
       return { ok: false, error: 'Verification not found.' };
