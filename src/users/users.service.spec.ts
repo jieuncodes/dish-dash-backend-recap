@@ -55,13 +55,15 @@ describe('UserService', () => {
   it('should be defined', () => {
     expect(service).toBeDefined();
   });
-});
 
-describe('createAccount', () => {
-  it('should fail if user exists', () => {});
-});
+  describe('createAccount', () => {
+    it('should fail if user exists', () => {
+      usersRepository.findOne.mockResolvedValue({});
+    });
+  });
 
-it.todo('login');
-it.todo('findById');
-it.todo('editProfile');
-it.todo('verifyEmail');
+  it.todo('login');
+  it.todo('findById');
+  it.todo('editProfile');
+  it.todo('verifyEmail');
+});
