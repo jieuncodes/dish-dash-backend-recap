@@ -6,7 +6,6 @@ import { Verification } from './entities/verification.entity';
 import { JwtService } from 'src/jwt/jwt.service';
 import { MailService } from 'src/mail/mail.service';
 import { Repository } from 'typeorm';
-import exp from 'constants';
 
 const mockRepository = {
   findOne: jest.fn(),
@@ -61,7 +60,7 @@ describe('UserService', () => {
     it('should fail if user exists', async () => {
       usersRepository.findOne.mockResolvedValue({
         id: 1,
-        email: 'happyhappyjieun@gmail.com',
+        email: '',
       });
       const result = await service.createAccount({
         email: '',
