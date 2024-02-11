@@ -1,11 +1,11 @@
 import { Test } from '@nestjs/testing';
-import { UsersService } from './users.service';
 import { getRepositoryToken } from '@nestjs/typeorm';
-import { User } from './entities/user.entity';
-import { Verification } from './entities/verification.entity';
 import { JwtService } from 'src/jwt/jwt.service';
 import { MailService } from 'src/mail/mail.service';
 import { Repository } from 'typeorm';
+import { User } from './entities/user.entity';
+import { Verification } from './entities/verification.entity';
+import { UsersService } from './users.service';
 
 const mockRepository = () => ({
   findOne: jest.fn(),
@@ -25,6 +25,7 @@ type MockRepository<T = any> = Partial<Record<keyof Repository<T>, jest.Mock>>;
 describe('UserService', () => {
   let service: UsersService;
   let usersRepository: MockRepository<User>;
+  let verificationsRepository: MockRepository<Verification>;
 
   beforeAll(async () => {
     const module = await Test.createTestingModule({
@@ -50,6 +51,7 @@ describe('UserService', () => {
     }).compile();
     service = module.get<UsersService>(UsersService);
     usersRepository = module.get(getRepositoryToken(User));
+    verificationsRepository = module.get(getRepositoryToken(Verification));
   });
 
   it('should be defined', () => {
@@ -77,11 +79,16 @@ describe('UserService', () => {
     it('should create a new user', async () => {
       usersRepository.findOne.mockResolvedValue(undefined);
       usersRepository.create.mockReturnValue(createAccountArgs);
+      usersRepository.save.mockResolvedValue(createAccountArgs);
       await service.createAccount(createAccountArgs);
       expect(usersRepository.create).toHaveBeenCalledTimes(1);
       expect(usersRepository.create).toHaveBeenCalledWith(createAccountArgs);
       expect(usersRepository.save).toHaveBeenCalledTimes(1);
       expect(usersRepository.save).toHaveBeenCalledWith(createAccountArgs);
+      expect(verificationsRepository.create).toHaveBeenCalledTimes(1);
+      expect(verificationsRepository.create).toHaveBeenCalledWith({
+        user: createAccountArgs,
+      });
     });
   });
 
