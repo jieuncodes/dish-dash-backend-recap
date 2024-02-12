@@ -131,6 +131,15 @@ describe('UserService', () => {
       expect(usersRepository.findOne).toHaveBeenCalledWith(expect.any(Object));
       expect(result).toEqual({ ok: false, error: 'User not found' });
     });
+    it('should fail if the password is wrong', async () => {
+      const mockedUser = {
+        id: 1,
+        checkPassword: jest.fn(() => Promise.resolve(false)),
+      };
+      usersRepository.findOne.mockResolvedValue(mockedUser);
+      const result = await service.login(loginArgs);
+      console.log('result', result);
+    });
   });
   it.todo('findById');
   it.todo('editProfile');
