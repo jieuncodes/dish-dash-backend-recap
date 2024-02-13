@@ -1,13 +1,10 @@
 import { Test } from '@nestjs/testing';
 import { MailService } from './mail.service';
 import { CONFIG_OPTIONS } from 'src/common/common.constants';
+import * as FormData from 'form-data';
 
-jest.mock('got', () => {});
-jest.mock('form-data', () => {
-  return {
-    append: jest.fn(),
-  };
-});
+jest.mock('got');
+jest.mock('form-data');
 
 describe('MailService', () => {
   let service: MailService;
@@ -34,14 +31,14 @@ describe('MailService', () => {
     expect(service).toBeDefined();
   });
 
-  describe('sendEmail', () => {
+  describe('sendVerificationEmail', () => {
     it('should call sendEmail', () => {
       const sendVerificationEmailArgs = {
         email: 'email',
         code: 'code',
       };
       jest.spyOn(service, 'sendEmail').mockImplementation(async () => {
-        console.log('i love u');
+        // console.log('i love u');
       });
 
       service.sendVerificationEmail(
@@ -59,5 +56,12 @@ describe('MailService', () => {
       );
     });
   });
-  it.todo('sendVerificationEmail');
+
+  describe('sendEmail', () => {
+    it('should send email', async () => {
+      service.sendEmail('', '', []);
+      const formSpy = jest.spyOn(FormData.prototype, 'append');
+      expect(formSpy).toHaveBeenCalledTimes(4);
+    });
+  });
 });
