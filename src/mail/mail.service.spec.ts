@@ -2,6 +2,13 @@ import { Test } from '@nestjs/testing';
 import { MailService } from './mail.service';
 import { CONFIG_OPTIONS } from 'src/common/common.constants';
 
+jest.mock('got', () => {});
+jest.mock('form-data', () => {
+  return {
+    append: jest.fn(),
+  };
+});
+
 describe('MailService', () => {
   let service: MailService;
 
@@ -26,4 +33,6 @@ describe('MailService', () => {
   it('should be defined', () => {
     expect(service).toBeDefined();
   });
+  it.todo('sendEmail');
+  it.todo('sendVerificationEmail');
 });
