@@ -54,6 +54,7 @@ describe('UserService', () => {
         },
       ],
     }).compile();
+
     service = module.get<UsersService>(UsersService);
     mailService = module.get<MailService>(MailService);
     jwtService = module.get<JwtService>(JwtService);
