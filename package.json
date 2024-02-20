@@ -1,27 +1,5 @@
 {
-  "name": "",
-  "version": "0.0.1",
-  "description": "",
   "author": "",
-  "private": true,
-  "license": "UNLICENSED",
-  "engines": {
-    "node": "^21.0.0"
-  },
-  "scripts": {
-    "build": "nest build",
-    "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
-    "start": "cross-env NODE_ENV=prod nest start",
-    "start:dev": "cross-env NODE_ENV=dev nest start --watch",
-    "start:debug": "nest start --debug --watch",
-    "start:prod": "node dist/main",
-    "lint": "eslint \"{src,apps,libs,test}/**/*.ts\" --fix",
-    "test": "jest",
-    "test:watch": "jest --watch",
-    "test:cov": "jest --coverage",
-    "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
-    "test:e2e": "jest --config ./test/jest-e2e.json --watch"
-  },
   "dependencies": {
     "@apollo/server": "^4.9.5",
     "@nestjs/apollo": "^12.0.11",
@@ -35,7 +13,6 @@
     "@types/got": "^9.6.12",
     "@types/jsonwebtoken": "^9.0.5",
     "bcrypt": "^5.1.1",
-    "class-transformer": "^0.5.1",
     "class-validator": "^0.14.0",
     "cross-env": "^7.0.3",
     "form-data": "^4.0.0",
@@ -49,6 +26,7 @@
     "typeorm": "^0.3.17",
     "uuid": "^9.0.1"
   },
+  "description": "",
   "devDependencies": {
     "@nestjs/cli": "^10.0.0",
     "@nestjs/schematics": "^10.0.0",
@@ -72,29 +50,50 @@
     "tsconfig-paths": "^4.2.0",
     "typescript": "^5.1.3"
   },
+  "engines": {
+    "node": "^21.0.0"
+  },
   "jest": {
-    "rootDir": "src",
-    "moduleNameMapper": {
-      "^src/(.*)$": "<rootDir>/$1"
-    },
+    "collectCoverageFrom": [
+      "**/*.service.(t|j)s"
+    ],
+    "coverageDirectory": "../coverage",
+    "coveragePathIgnorePatterns": [
+      "node_modules/",
+      ".entity.ts",
+      ".constants.ts"
+    ],
     "moduleFileExtensions": [
       "js",
       "json",
       "ts"
     ],
+    "moduleNameMapper": {
+      "^src/(.*)$": "<rootDir>/$1"
+    },
+    "rootDir": "src",
+    "testEnvironment": "node",
     "testRegex": ".*\\.spec\\.ts$",
     "transform": {
       "^.+\\.(t|j)s$": "ts-jest"
-    },
-    "collectCoverageFrom": [
-      "**/*.service.(t|j)s"
-    ],
-    "coverageDirectory": "../coverage",
-    "testEnvironment": "node",
-    "coveragePathIgnorePatterns": [
-      "node_modules/",
-      ".entity.ts",
-      ".constants.ts"
-    ]
-  }
+    }
+  },
+  "license": "UNLICENSED",
+  "name": "",
+  "private": true,
+  "scripts": {
+    "build": "nest build",
+    "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
+    "lint": "eslint \"{src,apps,libs,test}/**/*.ts\" --fix",
+    "start": "cross-env NODE_ENV=prod nest start",
+    "start:debug": "nest start --debug --watch",
+    "start:dev": "cross-env NODE_ENV=dev nest start --watch",
+    "start:prod": "node dist/main",
+    "test": "jest",
+    "test:cov": "jest --coverage",
+    "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
+    "test:e2e": "jest --config ./test/jest-e2e.json --watch --detectOpenHandles",
+    "test:watch": "jest --watch"
+  },
+  "version": "0.0.1"
 }

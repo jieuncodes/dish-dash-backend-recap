@@ -1,10 +1,13 @@
 import { Test } from '@nestjs/testing';
 import { MailService } from './mail.service';
 import { CONFIG_OPTIONS } from 'src/common/common.constants';
+import got from 'got';
 import * as FormData from 'form-data';
 
 jest.mock('got');
 jest.mock('form-data');
+
+const TEST_DOMAIN = 'test-domain';
 
 describe('MailService', () => {
   let service: MailService;
@@ -37,9 +40,7 @@ describe('MailService', () => {
         email: 'email',
         code: 'code',
       };
-      jest.spyOn(service, 'sendEmail').mockImplementation(async () => {
-        // console.log('i love u');
-      });
+      jest.spyOn(service, 'sendEmail').mockImplementation(async () => true);
 
       service.sendVerificationEmail(
         sendVerificationEmailArgs.email,
@@ -59,9 +60,15 @@ describe('MailService', () => {
 
   describe('sendEmail', () => {
     it('should send email', async () => {
-      service.sendEmail('', '', []);
+      const ok = await service.sendEmail('', '', []);
       const formSpy = jest.spyOn(FormData.prototype, 'append');
-      expect(formSpy).toHaveBeenCalledTimes(4);
+      expect(formSpy).toHaveBeenCalled();
+      expect(got).toHaveBeenCalledTimes(1);
+      expect(got).toHaveBeenCalledWith(
+        `https://api.mailgun.net/v3/${TEST_DOMAIN}/messages`,
+        expect.any(Object),
+      );
+      expect(ok).toEqual(true);
     });
   });
 });
