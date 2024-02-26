@@ -19,6 +19,7 @@ const testUser = {
 
 describe('UserModule (e2e)', () => {
   let app: INestApplication;
+  let jwtToken: string;
 
   beforeAll(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -123,6 +124,7 @@ describe('UserModule (e2e)', () => {
           expect(login.ok).toBe(true);
           expect(login.error).toBe(null);
           expect(login.token).toEqual(expect.any(String));
+          jwtToken = login.token;
         });
     });
     it('should not be able to login with wrong credentials', () => {
