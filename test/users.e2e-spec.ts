@@ -19,14 +19,11 @@ const testUser = {
 
 describe('UserModule (e2e)', () => {
   let app: INestApplication;
-  const graphqlRequest = (query: string) =>
-    request(app.getHttpServer()).post(GRAPHQL_ENDPOINT).send({ query });
 
   beforeAll(async () => {
     const module: TestingModule = await Test.createTestingModule({
       imports: [AppModule],
     }).compile();
-
     app = module.createNestApplication();
     await app.init();
   });
@@ -48,16 +45,22 @@ describe('UserModule (e2e)', () => {
 
   describe('createAccount', () => {
     it('should create account', () => {
-      graphqlRequest(`mutation{
-        createAccount(input: {
-          email: "${testUser.email}",
-          password:"${testUser.password}", 
-          role:Owner
-        }){
-          ok
-          error
-        }
-      }`)
+      return request(app.getHttpServer())
+        .post(GRAPHQL_ENDPOINT)
+        .send({
+          query: `
+          mutation {
+            createAccount(input: {
+              email:"${testUser.email}",
+              password:"${testUser.password}",
+              role:Owner
+            }) {
+              ok
+              error
+            }
+          }
+          `,
+        })
         .expect(200)
         .expect((res) => {
           expect(res.body.data.createAccount.ok).toBe(true);
@@ -66,20 +69,24 @@ describe('UserModule (e2e)', () => {
     });
 
     it('should fail if account already exists', () => {
-      graphqlRequest(`mutation{
-        createAccount(input: {
-          email: "${testUser.email}",
-          password:"${testUser.password}", 
-          role:Owner
-        }){
-          ok
-          error
-        }
-      }`)
+      return request(app.getHttpServer())
+        .post(GRAPHQL_ENDPOINT)
+        .send({
+          query: `
+          mutation {
+            createAccount(input: {
+              email:"${testUser.email}",
+              password:"${testUser.password}",
+              role:Owner
+            }) {
+              ok
+              error
+            }
+          }
+        `,
+        })
         .expect(200)
         .expect((res) => {
-          console.log('res', res.body);
-
           expect(res.body.data.createAccount.ok).toBe(false);
           expect(res.body.data.createAccount.error).toBe(
             'There is a user with that email already.',
@@ -90,16 +97,22 @@ describe('UserModule (e2e)', () => {
 
   describe('login', () => {
     it('should login with correct credentials', () => {
-      graphqlRequest(`mutation {
-        login(
-          input: { email: "${testUser.email}", password: "${testUser.password}" }
-        ){
-          ok
-          error
-          token
-        }
-      }
-`)
+      return request(app.getHttpServer())
+        .post(GRAPHQL_ENDPOINT)
+        .send({
+          query: `
+          mutation {
+            login(input:{
+              email:"${testUser.email}",
+              password:"${testUser.password}",
+            }) {
+              ok
+              error
+              token
+            }
+          }
+        `,
+        })
         .expect(200)
         .expect((res) => {
           const {
@@ -112,9 +125,36 @@ describe('UserModule (e2e)', () => {
           expect(login.token).toEqual(expect.any(String));
         });
     });
-    it.todo('should not be able to login with wrong credentials');
+    it('should not be able to login with wrong credentials', () => {
+      return request(app.getHttpServer())
+        .post(GRAPHQL_ENDPOINT)
+        .send({
+          query: `
+          mutation {
+            login(input:{
+              email:"${testUser.email}",
+              password:"wrong-password",
+            }) {
+              ok
+              error
+              token
+            }
+          }
+        `,
+        })
+        .expect(200)
+        .expect((res) => {
+          const {
+            body: {
+              data: { login },
+            },
+          } = res;
+          expect(login.ok).toBe(false);
+          expect(login.error).toBe('Wrong password');
+          expect(login.token).toBe(null);
+        });
+    });
   });
-
   it.todo('userProfile');
   it.todo('me');
   it.todo('verifyEmail');
