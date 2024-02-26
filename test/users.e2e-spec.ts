@@ -12,8 +12,15 @@ jest.mock('got', () => {
 
 const GRAPHQL_ENDPOINT = '/graphql';
 
+const testUser = {
+  email: 'jieun@codes.com',
+  password: '12345',
+};
+
 describe('UserModule (e2e)', () => {
   let app: INestApplication;
+  const graphqlRequest = (query: string) =>
+    request(app.getHttpServer()).post(GRAPHQL_ENDPOINT).send({ query });
 
   beforeAll(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -40,23 +47,17 @@ describe('UserModule (e2e)', () => {
   });
 
   describe('createAccount', () => {
-    const EMAIL = 'jieun@codes.com';
-
     it('should create account', () => {
-      return request(app.getHttpServer())
-        .post(GRAPHQL_ENDPOINT)
-        .send({
-          query: `mutation{
-  createAccount(input: {
-    email: "${EMAIL}",
-    password:"12345", 
-    role:Owner
-  }){
-    ok
-    error
-  }
-}`,
-        })
+      graphqlRequest(`mutation{
+        createAccount(input: {
+          email: "${testUser.email}",
+          password:"${testUser.password}", 
+          role:Owner
+        }){
+          ok
+          error
+        }
+      }`)
         .expect(200)
         .expect((res) => {
           expect(res.body.data.createAccount.ok).toBe(true);
@@ -65,22 +66,20 @@ describe('UserModule (e2e)', () => {
     });
 
     it('should fail if account already exists', () => {
-      return request(app.getHttpServer())
-        .post(GRAPHQL_ENDPOINT)
-        .send({
-          query: `mutation{
-  createAccount(input: {
-    email: "${EMAIL}",
-    password:"12345", 
-    role:Owner
-  }){
-    ok
-    error
-  }
-}`,
-        })
+      graphqlRequest(`mutation{
+        createAccount(input: {
+          email: "${testUser.email}",
+          password:"${testUser.password}", 
+          role:Owner
+        }){
+          ok
+          error
+        }
+      }`)
         .expect(200)
         .expect((res) => {
+          console.log('res', res.body);
+
           expect(res.body.data.createAccount.ok).toBe(false);
           expect(res.body.data.createAccount.error).toBe(
             'There is a user with that email already.',
@@ -89,7 +88,33 @@ describe('UserModule (e2e)', () => {
     });
   });
 
-  it.todo('login');
+  describe('login', () => {
+    it('should login with correct credentials', () => {
+      graphqlRequest(`mutation {
+        login(
+          input: { email: "${testUser.email}", password: "${testUser.password}" }
+        ){
+          ok
+          error
+          token
+        }
+      }
+`)
+        .expect(200)
+        .expect((res) => {
+          const {
+            body: {
+              data: { login },
+            },
+          } = res;
+          expect(login.ok).toBe(true);
+          expect(login.error).toBe(null);
+          expect(login.token).toEqual(expect.any(String));
+        });
+    });
+    it.todo('should not be able to login with wrong credentials');
+  });
+
   it.todo('userProfile');
   it.todo('me');
   it.todo('verifyEmail');
