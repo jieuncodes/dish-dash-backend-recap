@@ -2,7 +2,7 @@ import { MailService } from './../mail/mail.service';
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { JwtService } from 'src/jwt/jwt.service';
-import { Repository } from 'typeorm';
+import { Not, Repository } from 'typeorm';
 import { CreateAccountInput } from './dtos/create-account.dto';
 import { EditProfileInput, EditProfileOutput } from './dtos/edit-profile.dto';
 import { LoginInput } from './dtos/login.dto';
@@ -97,6 +97,12 @@ export class UsersService {
   ): Promise<EditProfileOutput> {
     try {
       const user = await this.users.findOne({ where: { id: userId } });
+      const exist = await this.users.exist({
+        where: { email, id: Not(userId) },
+      });
+      if (exist) {
+        return { ok: false, error: 'This email is already taken.' };
+      }
       if (email) {
         user.email = email;
         user.verified = false;
