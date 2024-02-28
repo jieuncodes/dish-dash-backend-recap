@@ -369,6 +369,33 @@ describe('UserModule (e2e)', () => {
           expect(error).toBe(null);
         });
     });
-    it.todo('should fail on wrong verification code.');
+    it('should fail on wrong verification code.', async () => {
+      return request(app.getHttpServer())
+        .post(GRAPHQL_ENDPOINT)
+        .send({
+          query: `
+      mutation{
+        verifyEmail(input:{
+          code: "xxxxxx"
+        }){
+          ok
+          error
+        }
+      }
+      `,
+        })
+        .expect(200)
+        .expect((res) => {
+          const {
+            body: {
+              data: {
+                verifyEmail: { ok, error },
+              },
+            },
+          } = res;
+          expect(ok).toBe(false);
+          expect(error).toBe('Verification not found.');
+        });
+    });
   });
 });
