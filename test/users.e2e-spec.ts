@@ -275,8 +275,9 @@ describe('UserModule (e2e)', () => {
   });
 
   describe('editProfile', () => {
+    const NEW_EMAIL = 'jieuncodes@new.com';
+
     it('should change email', () => {
-      const NEW_EMAIL = 'jieuncodes@new.com';
       return request(app.getHttpServer())
         .post(GRAPHQL_ENDPOINT)
         .set('X-JWT', jwtToken)
@@ -302,9 +303,29 @@ describe('UserModule (e2e)', () => {
             },
           } = res;
 
-          console.log('res.body', res.body);
           expect(ok).toBe(true);
           expect(error).toBe(null);
+        });
+    });
+    it('should have new email', () => {
+      return request(app.getHttpServer())
+        .post(GRAPHQL_ENDPOINT)
+        .set('X-JWT', jwtToken)
+        .send({
+          query: `{me{
+        email
+      }}`,
+        })
+        .expect(200)
+        .expect((res) => {
+          const {
+            body: {
+              data: {
+                me: { email },
+              },
+            },
+          } = res;
+          expect(email).toBe(NEW_EMAIL);
         });
     });
   });
