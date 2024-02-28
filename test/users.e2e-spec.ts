@@ -194,16 +194,86 @@ describe('UserModule (e2e)', () => {
               },
             },
           } = res;
-          console.log('res.body', res.body.user);
           expect(ok).toBe(true);
           expect(error).toBe(null);
           expect(user.id).toBe(userId);
         });
     });
 
-    it.todo('should not find a profile');
+    it('should not find a profile', () => {
+      return request(app.getHttpServer())
+        .post(GRAPHQL_ENDPOINT)
+        .set('X-JWT', jwtToken)
+        .send({
+          query: `
+        {
+          userProfile(userId:666){
+            ok
+            error
+            user {
+              id
+            }
+          }
+        }
+        `,
+        })
+        .expect(200)
+        .expect((res) => {
+          const {
+            body: {
+              data: {
+                userProfile: { ok, error, user },
+              },
+            },
+          } = res;
+          expect(ok).toBe(false);
+          expect(error).toBe('User Not Found');
+          expect(user).toBe(null);
+        });
+    });
   });
-  it.todo('me');
+
+  describe('me', () => {
+    it('should find my profile', () => {
+      return request(app.getHttpServer())
+        .post(GRAPHQL_ENDPOINT)
+        .set('X-JWT', jwtToken)
+        .send({
+          query: `{me{
+          email
+        }}`,
+        })
+        .expect(200)
+        .expect((res) => {
+          const {
+            body: {
+              data: {
+                me: { email },
+              },
+            },
+          } = res;
+          expect(email).toBe(testUser.email);
+        });
+    });
+    it('should not allow logged out user', () => {
+      return request(app.getHttpServer())
+        .post(GRAPHQL_ENDPOINT)
+        .send({
+          query: `{me{
+          email
+        }}`,
+        })
+        .expect(200)
+        .expect((res) => {
+          const {
+            body: { errors },
+          } = res;
+          const [error] = errors;
+          expect(error.message).toBe('Forbidden resource');
+        });
+    });
+  });
+
   it.todo('verifyEmail');
   it.todo('editProfile');
 });
