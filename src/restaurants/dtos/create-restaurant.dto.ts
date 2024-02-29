@@ -6,6 +6,7 @@ import { CoreOutput } from 'src/common/dtos/output.dto';
 export class CreateRestaurantInput extends OmitType(Restaurant, [
   'id',
   'category',
+  'owner',
 ]) {}
 
 @ObjectType()

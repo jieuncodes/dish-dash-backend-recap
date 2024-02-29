@@ -5,6 +5,8 @@ import {
   CreateRestaurantInput,
   CreateRestaurantOutput,
 } from './dtos/create-restaurant.dto';
+import { AuthUser } from 'src/auth/auth-user.decorator';
+import { User } from 'src/users/entities/user.entity';
 
 @Resolver(() => Restaurant)
 export class RestaurantResolver {
@@ -12,8 +14,12 @@ export class RestaurantResolver {
 
   @Mutation(() => CreateRestaurantOutput)
   async createRestaurant(
+    @AuthUser() authUser: User,
     @Args('input') createRestaurantInput: CreateRestaurantInput,
   ): Promise<CreateRestaurantOutput> {
-    return await this.restaurantService.createRestaurant(createRestaurantInput);
+    return await this.restaurantService.createRestaurant(
+      authUser,
+      createRestaurantInput,
+    );
   }
 }
