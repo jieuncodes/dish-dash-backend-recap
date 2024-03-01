@@ -9,15 +9,20 @@ import { Column, Entity, OneToMany } from 'typeorm';
 @Entity()
 export class Category extends CoreEntity {
   @Field(() => String)
-  @Column()
+  @Column({ unique: true })
   @IsString()
   @Length(5)
   name: string;
 
-  @Field(() => String)
-  @Column()
+  @Field(() => String, { nullable: true })
+  @Column({ nullable: true })
   @IsString()
   categoryImg: string;
+
+  @Field(() => String)
+  @Column({ unique: true })
+  @IsString()
+  slug: string;
 
   @Field(() => [Restaurant])
   @OneToMany(() => Restaurant, (restaurant) => restaurant.category)
