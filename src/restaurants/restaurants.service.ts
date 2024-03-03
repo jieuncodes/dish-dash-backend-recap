@@ -1,4 +1,8 @@
 import {
+  EditRestaurantInput,
+  EditRestaurantOutput,
+} from './dtos/edit-restaurant.dto';
+import {
   CreateRestaurantInput,
   CreateRestaurantOutput,
 } from './dtos/create-restaurant.dto';
@@ -25,9 +29,11 @@ export class RestaurantService {
     try {
       const newRestaurant = this.restaurants.create(createRestaurantInput);
       newRestaurant.owner = owner;
+
       const categoryName = createRestaurantInput.categoryName
         .trim()
         .toLowerCase();
+
       const categorySlug = categoryName.replace(/ /g, '-');
       let category = await this.categories.findOne({
         where: { slug: categorySlug },
@@ -48,6 +54,38 @@ export class RestaurantService {
       return {
         ok: false,
         error: "Couldn't create restaurant",
+      };
+    }
+  }
+
+  async editRestaurant(
+    owner: User,
+    editRestaurantInput: EditRestaurantInput,
+  ): Promise<EditRestaurantOutput> {
+    try {
+      const restaurant = await this.restaurants.findOneOrFail({
+        where: { id: editRestaurantInput.restaurantId },
+      });
+
+      if (!restaurant) {
+        return {
+          ok: false,
+          error: 'Restaurant not found',
+        };
+      }
+
+      if (owner.id !== restaurant.ownerId) {
+        return {
+          ok: false,
+          error: "You can't edit a restaurant that you don't own",
+        };
+      }
+
+      return { ok: true };
+    } catch (error) {
+      return {
+        ok: false,
+        error: "Couldn't edit restaurant",
       };
     }
   }
