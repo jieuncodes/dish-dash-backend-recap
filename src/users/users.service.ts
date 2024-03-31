@@ -121,7 +121,6 @@ export class UsersService {
         ok: true,
       };
     } catch (error) {
-      console.log('error', error);
       return { ok: false, error: 'Could not update profile.' };
     }
   }

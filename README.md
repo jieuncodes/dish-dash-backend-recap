@@ -2,14 +2,15 @@
 
 ## Backend
 
-- Edit Restaurant
-- Delete Restaurant
+-[x] Edit Restaurant
 
-- See Categories
-- See Restaurants by Category (pagination)
-- See Restaurants (pagination)
-- See Restaurant
+-[] Delete Restaurant
 
-- Create Dish
-- Edit Dish
-- Delete Dish
+-[] See Categories
+-[] See Restaurants by Category (pagination)
+-[] See Restaurants (pagination)
+-[] See Restaurant
+
+-[] Create Dish
+-[] Edit Dish
+-[] Delete Dish

@@ -11,15 +11,14 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Restaurant } from './entities/restaurant.entity';
 import { User } from 'src/users/entities/user.entity';
-import { Category } from 'src/users/entities/category.entity';
 import { CategoryRepository } from './repositories/category.repository';
+import { Category } from 'src/users/entities/category.entity';
 
 @Injectable()
 export class RestaurantService {
   constructor(
     @InjectRepository(Restaurant)
     private readonly restaurants: Repository<Restaurant>,
-    @InjectRepository(Category)
     private readonly categories: CategoryRepository,
   ) {}
 
@@ -71,6 +70,20 @@ export class RestaurantService {
           error: "You can't edit a restaurant that you don't own",
         };
       }
+
+      let category: Category;
+      if (editRestaurantInput.categoryName) {
+        category = await this.categories.getOrCreate(
+          editRestaurantInput.categoryName,
+        );
+      }
+      await this.restaurants.save([
+        {
+          id: editRestaurantInput.restaurantId,
+          ...editRestaurantInput,
+          ...(category && { category }),
+        },
+      ]);
 
       return { ok: true };
     } catch (error) {
