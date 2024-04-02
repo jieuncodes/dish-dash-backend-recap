@@ -4,7 +4,7 @@
 
 -[x] Edit Restaurant
 
--[] Delete Restaurant
+-[x] Delete Restaurant
 
 -[] See Categories
 -[] See Restaurants by Category (pagination)

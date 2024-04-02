@@ -17,6 +17,7 @@ import { Restaurant } from './entities/restaurant.entity';
 import { User } from 'src/users/entities/user.entity';
 import { CategoryRepository } from './repositories/category.repository';
 import { Category } from 'src/users/entities/category.entity';
+import { AllCategoriesOutput } from './dtos/all-categories.dto';
 
 @Injectable()
 export class RestaurantService {
@@ -122,6 +123,21 @@ export class RestaurantService {
       return {
         ok: false,
         error: "Couldn't delete restaurant",
+      };
+    }
+  }
+
+  async allCategories(): Promise<AllCategoriesOutput> {
+    try {
+      const categories = await this.categories.find();
+      return {
+        ok: true,
+        categories,
+      };
+    } catch {
+      return {
+        ok: false,
+        error: 'Could not load categories',
       };
     }
   }
