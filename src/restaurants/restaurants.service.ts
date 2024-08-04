@@ -142,4 +142,14 @@ export class RestaurantService {
       };
     }
   }
+
+  countRestaurants(category: Category) {
+    return this.restaurants.count({
+      where: {
+        category: {
+          id: category.id,
+        },
+      },
+    });
+  }
 }
