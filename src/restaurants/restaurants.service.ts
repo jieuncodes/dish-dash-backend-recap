@@ -98,6 +98,7 @@ export class RestaurantService {
       };
     }
   }
+
   async deleteRestaurant(
     owner: User,
     { restaurantId }: DeleteRestaurantInput,
