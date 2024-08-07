@@ -1,8 +1,8 @@
-import { Field, ObjectType } from '@nestjs/graphql';
+import { Field, InputType, ObjectType } from '@nestjs/graphql';
 import { CoreOutput } from 'src/common/dtos/output.dto';
 import { Category } from 'src/users/entities/category.entity';
 
-@ObjectType()
+@InputType()
 export class CategoryInput {
   @Field(() => String)
   slug: string;

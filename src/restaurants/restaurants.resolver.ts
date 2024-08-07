@@ -25,6 +25,7 @@ import {
 } from './dtos/delete-restaurants.dto';
 import { Category } from 'src/users/entities/category.entity';
 import { AllCategoriesOutput } from './dtos/all-categories.dto';
+import { CategoryInput, CategoryOutput } from './dtos/category.dto';
 
 @Resolver(() => Restaurant)
 export class RestaurantResolver {
@@ -75,5 +76,12 @@ export class CategoryResolver {
   @Query(() => AllCategoriesOutput)
   allCategories(): Promise<AllCategoriesOutput> {
     return this.restaurantService.allCategories();
+  }
+
+  @Query(() => CategoryOutput)
+  category(
+    @Args('categoryInput') categoryInput: CategoryInput,
+  ): Promise<CategoryOutput> {
+    return this.restaurantService.findCategoryBySlug(categoryInput);
   }
 }
